@@ -1,0 +1,267 @@
+PSPSDK=$(shell psp-config --pspsdk-path)
+
+PSPAPP=arch/psp
+PSPLIB=$(PSPAPP)/lib
+MZLIB=$(PSPAPP)/libmz
+
+PSP_FW_VERSION=200
+export PSP_FW_VERSION
+
+PSP_APP_NAME=VICE PSP C64
+PSP_APP_VER=3.2.3
+TARGET=vicepsp
+#BUILD_PRX = 1
+EXTRA_TARGETS=EBOOT.PBP
+PSP_EBOOT_TITLE=$(PSP_APP_NAME) $(PSP_APP_VER)
+PSP_EBOOT_ICON=$(PSPAPP)/data/xmb-icon-c64.png
+PSP_LARGE_MEMORY = 1
+
+OBJEXT=o
+
+BUILD_EMUL=c64/c64-cmdline-options.$(OBJEXT) \
+	c64/c64-memory-hacks.$(OBJEXT) c64/c64-resources.$(OBJEXT) \
+	c64/c64-snapshot.$(OBJEXT) c64/c64.$(OBJEXT) c64/c64_256k.$(OBJEXT) \
+	c64/c64bus.$(OBJEXT) c64/c64cia1.$(OBJEXT) c64/c64cia2.$(OBJEXT) \
+	c64/c64cpu.$(OBJEXT) c64/c64datasette.$(OBJEXT) c64/c64drive.$(OBJEXT) \
+	c64/c64embedded.$(OBJEXT) c64/c64export.$(OBJEXT) c64/c64fastiec.$(OBJEXT) \
+	c64/c64gluelogic.$(OBJEXT) c64/c64iec.$(OBJEXT) c64/c64io.$(OBJEXT) \
+	c64/c64keyboard.$(OBJEXT) c64/c64mem.$(OBJEXT) c64/c64meminit.$(OBJEXT) \
+	c64/c64memlimit.$(OBJEXT) c64/c64memrom.$(OBJEXT) \
+	c64/c64memsnapshot.$(OBJEXT) c64/c64model.$(OBJEXT) \
+	c64/c64parallel.$(OBJEXT) c64/c64pla.$(OBJEXT) c64/c64printer.$(OBJEXT) \
+	c64/c64rom.$(OBJEXT) c64/c64romset.$(OBJEXT) c64/c64rsuser.$(OBJEXT) \
+	c64/c64sound.$(OBJEXT) c64/c64video.$(OBJEXT) c64/patchrom.$(OBJEXT) \
+	c64/plus256k.$(OBJEXT) c64/plus60k.$(OBJEXT) c64/psid.$(OBJEXT) \
+	c64/reloc65.$(OBJEXT) \
+	c64/cart/c64cart.$(OBJEXT) \
+	c64/cart/c64carthooks.$(OBJEXT) c64/cart/c64cartmem.$(OBJEXT) c64/cart/crt.$(OBJEXT) \
+	c64/cart/c64acia1.$(OBJEXT) c64/cart/cs8900io.$(OBJEXT) \
+	c64/cart/digimax.$(OBJEXT) c64/cart/ds12c887rtc.$(OBJEXT) c64/cart/ethernetcart.$(OBJEXT) \
+	c64/cart/georam.$(OBJEXT) c64/cart/sfx_soundexpander.$(OBJEXT) \
+	c64/cart/sfx_soundsampler.$(OBJEXT) \
+	c64/cart/actionreplay2.$(OBJEXT) \
+	c64/cart/actionreplay3.$(OBJEXT) c64/cart/actionreplay4.$(OBJEXT) \
+	c64/cart/actionreplay.$(OBJEXT) c64/cart/atomicpower.$(OBJEXT) \
+	c64/cart/c64-generic.$(OBJEXT) c64/cart/c64-midi.$(OBJEXT) c64/cart/c64tpi.$(OBJEXT) \
+	c64/cart/capture.$(OBJEXT) c64/cart/clockport.$(OBJEXT) \
+	c64/cart/clockport-mp3at64.$(OBJEXT) c64/cart/clockport-rrnet.$(OBJEXT) \
+	c64/cart/comal80.$(OBJEXT) c64/cart/daa.$(OBJEXT) \
+	c64/cart/debugcart.$(OBJEXT) c64/cart/delaep256.$(OBJEXT) c64/cart/delaep64.$(OBJEXT) \
+	c64/cart/delaep7x8.$(OBJEXT) c64/cart/diashowmaker.$(OBJEXT) c64/cart/dinamic.$(OBJEXT) \
+	c64/cart/dqbb.$(OBJEXT) c64/cart/easycalc.$(OBJEXT) c64/cart/easyflash.$(OBJEXT) \
+	c64/cart/epyxfastload.$(OBJEXT) c64/cart/exos.$(OBJEXT) c64/cart/expert.$(OBJEXT) \
+	c64/cart/final.$(OBJEXT) c64/cart/final3.$(OBJEXT) c64/cart/finalplus.$(OBJEXT) \
+	c64/cart/formel64.$(OBJEXT) c64/cart/freezeframe.$(OBJEXT) \
+	c64/cart/freezemachine.$(OBJEXT) c64/cart/funplay.$(OBJEXT) c64/cart/gamekiller.$(OBJEXT) \
+	c64/cart/gmod2.$(OBJEXT) c64/cart/gs.$(OBJEXT) c64/cart/ide64.$(OBJEXT) c64/cart/isepic.$(OBJEXT) \
+	c64/cart/kcs.$(OBJEXT) c64/cart/kingsoft.$(OBJEXT) c64/cart/mach5.$(OBJEXT) \
+	c64/cart/magicdesk.$(OBJEXT) c64/cart/magicformel.$(OBJEXT) c64/cart/magicvoice.$(OBJEXT) \
+	c64/cart/mikroass.$(OBJEXT) c64/cart/mmcreplay.$(OBJEXT) c64/cart/mmc64.$(OBJEXT) \
+	c64/cart/ocean.$(OBJEXT) c64/cart/pagefox.$(OBJEXT) c64/cart/prophet64.$(OBJEXT) \
+	c64/cart/ramcart.$(OBJEXT) c64/cart/retroreplay.$(OBJEXT) c64/cart/reu.$(OBJEXT) \
+	c64/cart/rexep256.$(OBJEXT) c64/cart/rexutility.$(OBJEXT) c64/cart/rgcd.$(OBJEXT) \
+	c64/cart/ross.$(OBJEXT) c64/cart/rrnetmk3.$(OBJEXT) c64/cart/shortbus.$(OBJEXT) \
+	c64/cart/shortbus_digimax.$(OBJEXT) c64/cart/shortbus_etfe.$(OBJEXT) \
+	c64/cart/silverrock128.$(OBJEXT) c64/cart/simonsbasic.$(OBJEXT) \
+	c64/cart/snapshot64.$(OBJEXT) c64/cart/stardos.$(OBJEXT) c64/cart/stb.$(OBJEXT) \
+	c64/cart/superexplode5.$(OBJEXT) c64/cart/supergames.$(OBJEXT) \
+	c64/cart/supersnapshot.$(OBJEXT) c64/cart/supersnapshot4.$(OBJEXT) \
+	c64/cart/warpspeed.$(OBJEXT) c64/cart/westermann.$(OBJEXT) c64/cart/zaxxon.$(OBJEXT) \
+	diag/c64_diag_586220_harness.$(OBJEXT) \
+	drive/iec/cia1571d.$(OBJEXT) drive/iec/cia1581d.$(OBJEXT) \
+	drive/iec/fdd.$(OBJEXT) drive/iec/glue1571.$(OBJEXT) drive/iec/iec-cmdline-options.$(OBJEXT) \
+	drive/iec/iec-resources.$(OBJEXT) drive/iec/iec.$(OBJEXT) drive/iec/iecrom.$(OBJEXT) \
+	drive/iec/memiec.$(OBJEXT) drive/iec/pc8477.$(OBJEXT) drive/iec/via1d1541.$(OBJEXT) \
+	drive/iec/via4000.$(OBJEXT) drive/iec/wd1770.$(OBJEXT) \
+	drive/iecieee/iecieee.$(OBJEXT) drive/iecieee/via2d.$(OBJEXT) \
+	drive/iec/c64exp/c64exp-cmdline-options.$(OBJEXT) \
+	drive/iec/c64exp/c64exp-resources.$(OBJEXT) drive/iec/c64exp/iec-c64exp.$(OBJEXT) \
+	drive/iec/c64exp/dolphindos3.$(OBJEXT) drive/iec/c64exp/profdos.$(OBJEXT) drive/iec/c64exp/stardos-exp.$(OBJEXT) \
+	drive/iec/c64exp/supercard.$(OBJEXT) \
+	drive/ieee/fdc.$(OBJEXT) \
+	drive/ieee/ieee-cmdline-options.$(OBJEXT) drive/ieee/ieee-resources.$(OBJEXT) \
+	drive/ieee/ieee.$(OBJEXT) drive/ieee/ieeerom.$(OBJEXT) drive/ieee/memieee.$(OBJEXT) \
+	drive/ieee/riot1d.$(OBJEXT) drive/ieee/riot2d.$(OBJEXT) drive/ieee/via1d2031.$(OBJEXT) \
+	drive/drive-check.$(OBJEXT) \
+	drive/drive-cmdline-options.$(OBJEXT) drive/drive-overflow.$(OBJEXT) \
+	drive/drive-resources.$(OBJEXT) drive/drive-snapshot.$(OBJEXT) \
+	drive/drive-sound.$(OBJEXT) drive/drive-writeprotect.$(OBJEXT) \
+	drive/drive.$(OBJEXT) drive/drivecpu.$(OBJEXT) drive/drivecpu65c02.$(OBJEXT) \
+	drive/driveimage.$(OBJEXT) drive/drivemem.$(OBJEXT) drive/driverom.$(OBJEXT) \
+	drive/drivesync.$(OBJEXT) drive/rotation.$(OBJEXT) \
+	drive/tcbm/glue1551.$(OBJEXT) drive/tcbm/mem1551.$(OBJEXT) \
+	drive/tcbm/tcbm-cmdline-options.$(OBJEXT) drive/tcbm/tcbm-resources.$(OBJEXT) \
+	drive/tcbm/tcbm.$(OBJEXT) drive/tcbm/tcbmrom.$(OBJEXT) drive/tcbm/tpid.$(OBJEXT) \
+	lib/p64/p64.$(OBJEXT) \
+	parallel/parallel-trap.$(OBJEXT) parallel/parallel.$(OBJEXT) \
+	vdrive/vdrive-bam.$(OBJEXT) vdrive/vdrive-command.$(OBJEXT) \
+	vdrive/vdrive-dir.$(OBJEXT) vdrive/vdrive-iec.$(OBJEXT) \
+	vdrive/vdrive-internal.$(OBJEXT) vdrive/vdrive-rel.$(OBJEXT) \
+	vdrive/vdrive-snapshot.$(OBJEXT) vdrive/vdrive.$(OBJEXT) \
+	raster/raster-cache.$(OBJEXT) \
+	raster/raster-canvas.$(OBJEXT) raster/raster-changes.$(OBJEXT) \
+	raster/raster-cmdline-options.$(OBJEXT) \
+	raster/raster-line-changes-sprite.$(OBJEXT) \
+	raster/raster-line-changes.$(OBJEXT) raster/raster-line.$(OBJEXT) \
+	raster/raster-modes.$(OBJEXT) raster/raster-resources.$(OBJEXT) \
+	raster/raster-sprite.$(OBJEXT) raster/raster-sprite-status.$(OBJEXT) \
+	raster/raster-sprite-cache.$(OBJEXT) raster/raster.$(OBJEXT) \
+	sid/catweaselmkiii.$(OBJEXT) sid/fastsid.$(OBJEXT) \
+	sid/hardsid.$(OBJEXT) sid/parsid.$(OBJEXT) \
+	sid/sid-cmdline-options.$(OBJEXT) sid/sid-resources.$(OBJEXT) \
+	sid/sid-snapshot.$(OBJEXT) sid/sid.$(OBJEXT) sid/ssi2001.$(OBJEXT) sid/resid.$(OBJEXT) \
+	samplerdrv/file_drv.$(OBJEXT) \
+	samplerdrv/portaudio_drv.$(OBJEXT) samplerdrv/sampler.$(OBJEXT) \
+	joyport/bbrtc.$(OBJEXT) joyport/cardkey.$(OBJEXT) \
+	joyport/coplin_keypad.$(OBJEXT) joyport/cx21.$(OBJEXT) joyport/cx85.$(OBJEXT) \
+	joyport/joyport.$(OBJEXT) joyport/joystick.$(OBJEXT) joyport/lightpen.$(OBJEXT) \
+	joyport/mouse.$(OBJEXT) joyport/paperclip64.$(OBJEXT) \
+	joyport/rushware_keypad.$(OBJEXT) joyport/sampler2bit.$(OBJEXT) \
+	joyport/sampler4bit.$(OBJEXT) joyport/script64_dongle.$(OBJEXT) \
+	joyport/vizawrite64_dongle.$(OBJEXT) joyport/waasoft_dongle.$(OBJEXT) \
+	sounddrv/soundaiff.$(OBJEXT) sounddrv/sounddummy.$(OBJEXT) \
+	sounddrv/sounddump.$(OBJEXT) sounddrv/soundfs.$(OBJEXT) sounddrv/soundiff.$(OBJEXT) \
+	sounddrv/soundmovie.$(OBJEXT) sounddrv/soundvoc.$(OBJEXT) sounddrv/soundwav.$(OBJEXT) \
+	gfxoutputdrv/bmpdrv.$(OBJEXT) gfxoutputdrv/doodledrv.$(OBJEXT) \
+	gfxoutputdrv/gfxoutput.$(OBJEXT) gfxoutputdrv/godotdrv.$(OBJEXT) gfxoutputdrv/iffdrv.$(OBJEXT) \
+	gfxoutputdrv/koaladrv.$(OBJEXT) gfxoutputdrv/nativedrv.$(OBJEXT) gfxoutputdrv/pcxdrv.$(OBJEXT) \
+	gfxoutputdrv/ppmdrv.$(OBJEXT) \
+	printerdrv/driver-select.$(OBJEXT) \
+	printerdrv/drv-1520.$(OBJEXT) printerdrv/drv-ascii.$(OBJEXT) printerdrv/drv-mps803.$(OBJEXT) \
+	printerdrv/drv-nl10.$(OBJEXT) printerdrv/drv-raw.$(OBJEXT) \
+	printerdrv/interface-serial.$(OBJEXT) printerdrv/interface-userport.$(OBJEXT) \
+	printerdrv/output-graphics.$(OBJEXT) printerdrv/output-select.$(OBJEXT) \
+	printerdrv/output-text.$(OBJEXT) printerdrv/printer-serial.$(OBJEXT) \
+	printerdrv/printer-userport.$(OBJEXT) printerdrv/printer.$(OBJEXT) \
+	vicii/vicii-badline.$(OBJEXT) \
+	vicii/vicii-cmdline-options.$(OBJEXT) \
+	vicii/vicii-color.$(OBJEXT) vicii/vicii-draw.$(OBJEXT) \
+	vicii/vicii-fetch.$(OBJEXT) vicii/vicii-irq.$(OBJEXT) vicii/vicii-mem.$(OBJEXT) \
+	vicii/vicii-phi1.$(OBJEXT) vicii/vicii-resources.$(OBJEXT) \
+	vicii/vicii-snapshot.$(OBJEXT) vicii/vicii-sprites.$(OBJEXT) \
+	vicii/vicii-stubs.$(OBJEXT) vicii/vicii-timing.$(OBJEXT) vicii/vicii.$(OBJEXT) \
+	video/render1x1.$(OBJEXT) video/render1x1crt.$(OBJEXT) \
+	video/render1x1ntsc.$(OBJEXT) video/render1x1pal.$(OBJEXT) \
+	video/render1x2.$(OBJEXT) video/render1x2crt.$(OBJEXT) video/render2x2.$(OBJEXT) \
+	video/render2x2crt.$(OBJEXT) video/render2x2ntsc.$(OBJEXT) \
+	video/render2x2pal.$(OBJEXT) video/render2x4.$(OBJEXT) \
+	video/render2x4crt.$(OBJEXT) video/renderscale2x.$(OBJEXT) \
+	video/renderyuv.$(OBJEXT) video/video-canvas.$(OBJEXT) \
+	video/video-cmdline-options.$(OBJEXT) video/video-color.$(OBJEXT) \
+	video/video-render-1x2.$(OBJEXT) video/video-render-2x2.$(OBJEXT) \
+	video/video-render-crt.$(OBJEXT) video/video-render-pal.$(OBJEXT) \
+	video/video-render.$(OBJEXT) video/video-resources.$(OBJEXT) \
+	video/video-sound.$(OBJEXT) video/video-viewport.$(OBJEXT) \
+	monitor/asm6502.$(OBJEXT) monitor/asm6502dtv.$(OBJEXT) \
+	monitor/asm6809.$(OBJEXT) monitor/asmR65C02.$(OBJEXT) monitor/asm65816.$(OBJEXT) \
+	monitor/asmz80.$(OBJEXT) monitor/mon_assemble6502.$(OBJEXT) \
+	monitor/mon_assembleR65C02.$(OBJEXT) monitor/mon_assemble65816.$(OBJEXT) \
+	monitor/mon_assemble6809.$(OBJEXT) monitor/mon_assemblez80.$(OBJEXT) \
+	monitor/mon_breakpoint.$(OBJEXT) monitor/mon_command.$(OBJEXT) \
+	monitor/mon_disassemble.$(OBJEXT) monitor/mon_drive.$(OBJEXT) \
+	monitor/mon_file.$(OBJEXT) monitor/mon_memmap.$(OBJEXT) monitor/mon_memory.$(OBJEXT) \
+	monitor/mon_register6502.$(OBJEXT) monitor/mon_register6502dtv.$(OBJEXT) \
+	monitor/mon_register6809.$(OBJEXT) monitor/mon_registerR65C02.$(OBJEXT) \
+	monitor/mon_register65816.$(OBJEXT) monitor/mon_registerz80.$(OBJEXT) \
+	monitor/mon_register.$(OBJEXT) monitor/mon_ui.$(OBJEXT) monitor/mon_util.$(OBJEXT) \
+	monitor/mon_lex.$(OBJEXT) monitor/mon_parse.$(OBJEXT) monitor/monitor.$(OBJEXT) \
+	monitor/monitor_network.$(OBJEXT) \
+	diskimage/diskimage.$(OBJEXT) \
+	diskimage/fsimage-check.$(OBJEXT) diskimage/fsimage-create.$(OBJEXT) \
+	diskimage/fsimage-dxx.$(OBJEXT) diskimage/fsimage-gcr.$(OBJEXT) \
+	diskimage/fsimage-p64.$(OBJEXT) diskimage/fsimage-probe.$(OBJEXT) \
+	diskimage/fsimage.$(OBJEXT) \
+	iecbus/iecbus.$(OBJEXT) \
+	serial/fsdrive.$(OBJEXT) serial/serial-device.$(OBJEXT) \
+	serial/serial-iec-bus.$(OBJEXT) serial/serial-iec-device.$(OBJEXT) \
+	serial/serial-iec-lib.$(OBJEXT) serial/serial-iec.$(OBJEXT) \
+	serial/serial-realdevice.$(OBJEXT) serial/serial-trap.$(OBJEXT) \
+	serial/serial.$(OBJEXT) \
+	fsdevice/fsdevice-close.$(OBJEXT) \
+	fsdevice/fsdevice-cmdline-options.$(OBJEXT) fsdevice/fsdevice-flush.$(OBJEXT) \
+	fsdevice/fsdevice-open.$(OBJEXT) fsdevice/fsdevice-read.$(OBJEXT) \
+	fsdevice/fsdevice-resources.$(OBJEXT) fsdevice/fsdevice-write.$(OBJEXT) \
+	fsdevice/fsdevice.$(OBJEXT) \
+	tape/t64.$(OBJEXT) tape/tap.$(OBJEXT) \
+	tape/tape-internal.$(OBJEXT) tape/tape-snapshot.$(OBJEXT) tape/tape.$(OBJEXT) \
+	tape/tapeimage.$(OBJEXT) \
+	imagecontents/diskcontents-block.$(OBJEXT) \
+	imagecontents/diskcontents-iec.$(OBJEXT) imagecontents/diskcontents.$(OBJEXT) \
+	imagecontents/imagecontents.$(OBJEXT) imagecontents/tapecontents.$(OBJEXT) \
+	fileio/cbmfile.$(OBJEXT) fileio/fileio.$(OBJEXT) \
+	fileio/p00.$(OBJEXT) \
+	core/ata.$(OBJEXT) core/ciacore.$(OBJEXT) \
+	core/ciatimer.$(OBJEXT) core/cs8900.$(OBJEXT) core/flash040core.$(OBJEXT) \
+	core/fmopl.$(OBJEXT) core/mc6821core.$(OBJEXT) core/m93c86.$(OBJEXT) \
+	core/riotcore.$(OBJEXT) core/ser-eeprom.$(OBJEXT) core/spi-sdcard.$(OBJEXT) \
+	core/t6721.$(OBJEXT) core/tpicore.$(OBJEXT) core/viacore.$(OBJEXT) \
+	rtc/bq4830y.$(OBJEXT) rtc/ds12c887.$(OBJEXT) \
+	rtc/ds1202_1302.$(OBJEXT) rtc/ds1216e.$(OBJEXT) rtc/ds1307.$(OBJEXT) \
+	rtc/ds1602.$(OBJEXT) rtc/pcf8583.$(OBJEXT) rtc/rtc.$(OBJEXT) \
+	rtc/rtc-58321a.$(OBJEXT) rtc/rtc-72421.$(OBJEXT) \
+	userport/userport.$(OBJEXT) \
+	userport/userport_4bit_sampler.$(OBJEXT) userport/userport_8bss.$(OBJEXT) \
+	userport/userport_dac.$(OBJEXT) userport/userport_diag_586220_harness.$(OBJEXT) \
+	userport/userport_digimax.$(OBJEXT) userport/userport_joystick.$(OBJEXT) \
+	userport/userport_rtc_58321a.$(OBJEXT) userport/userport_rtc_ds1307.$(OBJEXT) \
+ 	tapeport/cp-clockf83.$(OBJEXT) \
+	tapeport/dtl-basic-dongle.$(OBJEXT) tapeport/sense-dongle.$(OBJEXT) \
+	tapeport/tape_diag_586220_harness.$(OBJEXT) tapeport/tapecart.$(OBJEXT) \
+	tapeport/tapelog.$(OBJEXT) tapeport/tapeport.$(OBJEXT) \
+	rs232drv/rs232.$(OBJEXT) rs232drv/rs232drv.$(OBJEXT) \
+	rs232drv/rs232net.$(OBJEXT) rs232drv/rsuser.$(OBJEXT) \
+	resid/sid.$(OBJEXT) resid/voice.$(OBJEXT) resid/wave.$(OBJEXT) \
+	resid/envelope.$(OBJEXT) resid/filter.$(OBJEXT) resid/dac.$(OBJEXT) \
+	resid/extfilt.$(OBJEXT) resid/pot.$(OBJEXT) resid/version.$(OBJEXT) \
+	alarm.$(OBJEXT) attach.$(OBJEXT) autostart.$(OBJEXT) \
+	autostart-prg.$(OBJEXT) cbmdos.$(OBJEXT) cbmimage.$(OBJEXT) \
+	charset.$(OBJEXT) clipboard.$(OBJEXT) clkguard.$(OBJEXT) \
+	cmdline.$(OBJEXT) color.$(OBJEXT) crc32.$(OBJEXT) \
+	datasette.$(OBJEXT) debug.$(OBJEXT) dma.$(OBJEXT) \
+	embedded.$(OBJEXT) event.$(OBJEXT) findpath.$(OBJEXT) \
+	fliplist.$(OBJEXT) gcr.$(OBJEXT) info.$(OBJEXT) init.$(OBJEXT) \
+	initcmdline.$(OBJEXT) interrupt.$(OBJEXT) ioutil.$(OBJEXT) \
+	kbdbuf.$(OBJEXT) keyboard.$(OBJEXT) lib.$(OBJEXT) \
+	libm_math.$(OBJEXT) log.$(OBJEXT) machine-bus.$(OBJEXT) \
+	machine.$(OBJEXT) main.$(OBJEXT) network.$(OBJEXT) \
+	opencbmlib.$(OBJEXT) palette.$(OBJEXT) ram.$(OBJEXT) \
+	rawfile.$(OBJEXT) rawnet.$(OBJEXT) resources.$(OBJEXT) \
+	romset.$(OBJEXT) screenshot.$(OBJEXT) snapshot.$(OBJEXT) \
+	socket.$(OBJEXT) sound.$(OBJEXT) sysfile.$(OBJEXT) \
+	translate.$(OBJEXT) traps.$(OBJEXT) util.$(OBJEXT) \
+	vicefeatures.$(OBJEXT) vsync.$(OBJEXT) zfile.$(OBJEXT) \
+	zipcode.$(OBJEXT) 
+BUILD_PORT=arch/psp/joy.o arch/psp/video.o arch/psp/ui.o arch/psp/stubs.o \
+           arch/psp/main.o arch/psp/archdep.o arch/psp/vsidui.o \
+           arch/psp/blockdev.o arch/psp/c64ui.o arch/psp/console.o \
+           arch/psp/uicmdline.o arch/psp/uimon.o arch/psp/signals.o \
+           arch/psp/vsyncarch.o arch/psp/sfifo.o sounddrv/soundpsp.o arch/psp/mousedrv.o
+OBJS=$(BUILD_EMUL) $(BUILD_PORT)
+
+DEFINES=-DVERSION=\"3.2\" #-DPSP_DEBUG -DDEBUG_MAIN -DDBGKBD -DDEBUG_MOUSE -DDEBUG_ATTACH -DDEBUGCART -DDBGCAPTURE -DDBGINIT \
+		#-DDEBUG_DISKIMAGE -DDEBUG_VIDEOSOUND -DDBGUTIL -DDBGSYSFILE -DDEBUGMACHINE -DDEBUG_BUS -DDEBUG_TAPE -DDEBUGCRT \
+		#-DDEBUGCART -DDEBUGEXPORT -DDEBUG_VIDEO -DDEBUG_C64UI -DDEBUG_AUTOSTART
+BASE_DEFS=-DPSP -DPSP_APP_VER=\"$(PSP_APP_VER)\" -DPSP_APP_NAME="\"$(PSP_APP_NAME)\""
+CFLAGS=-O3 -G0 -Wall $(BASE_DEFS) $(DEFINES)
+CXXFLAGS=$(CFLAGS) -fno-exceptions -fno-rtti
+ASFLAGS=$(CFLAGS)
+INCDIR=$(PSPAPP) sid drive drive/iec drive/iec/c64exp drive/ieee drive/tcbm vicii \
+	tape c64 c64dtv raster vdrive c64/cart diag diskimage monitor \
+	imagecontents joyport lib/p64 tapeport userport core samplerdrv video rtc
+LIBDIR=$(PSPLIB) $(MZLIB)
+LIBS=-lminizip -lpsplib -lpng -lpspgu -lpsppower \
+     -lz -lm -lc -lpspaudio -lpsprtc -lpspwlan -lpspnet_adhoc \
+     -lpspnet_adhocctl -lpspnet_adhocmatching -lstdc++ -lpspdebug
+
+all: build_libs
+clean: clean_libs
+
+include $(PSPSDK)/lib/build.mak
+
+build_libs:
+	cd $(PSPLIB) ; $(MAKE)
+	cd $(MZLIB) ; $(MAKE) -f Makefile.psp
+clean_libs:
+	cd $(PSPLIB) ; $(MAKE) clean
+	cd $(MZLIB) ; $(MAKE) -f Makefile.psp clean
+

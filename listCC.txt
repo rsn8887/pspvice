@@ -1,0 +1,13 @@
+resid/dac.o \
+resid/envelope.o \
+resid/extfilt.o \
+resid/filter.o \
+resid/pot.o \
+resid/sid.o \
+resid/version.o \
+resid/voice.o \
+resid/wave.o \
+sid/resid-dtv.o \
+sid/resid.o \
+sounddrv/soundbeos.o \
+sounddrv/soundbsp.o \
