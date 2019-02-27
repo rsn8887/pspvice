@@ -101,8 +101,11 @@ pl_rewind.o: pl_rewind.c pl_rewind.h
 pl_ctl.o: pl_ctl.c pl_ctl.h
 	$(CC) $(DEFINES) $(CFLAGS) -c -o $@ $<
 
-stockfont.h: stockfont.fd genfont
-	./genfont < $< > $@
+stockfont.h:
+	cp -f ./stockfont.h_backup ./stockfont.h
 
-genfont: genfont.c
-	cc $< -o $@
+#stockfont.h: stockfont.fd genfont
+#	./genfont < $< > $@
+
+#genfont: genfont.c
+#	cc $< -o $@

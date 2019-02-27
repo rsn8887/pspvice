@@ -15,6 +15,11 @@
 #define DISPLAY_MODE_FIT_HEIGHT  1
 #define DISPLAY_MODE_FILL_SCREEN 2
 
+#define PALETTE_NONE 0
+#define PALETTE_PEPTO_PAL 1
+#define PALETTE_COLODORE 2
+#define NUM_PALETTE_ENTRIES 3
+
 #define MAP_BUTTONS         28
 #define MAP_SHIFT_START_POS 18 /* Shift buttons start here */
 

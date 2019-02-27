@@ -430,6 +430,12 @@ void psp_refresh_screen()
       pspVideoFillRect(0, 0, SCR_WIDTH, line_height, PSP_COLOR_BLACK);
   }
 
+  // Needed for palette
+  if (!activeCanvas->videoconfig->color_tables.updated)
+  { /* update colors as necessary */
+    video_color_update_palette(activeCanvas);
+  }
+
   /* Draw the screen */
   pl_gfx_put_image(Screen, screen_x, screen_y, screen_w, screen_h);
 

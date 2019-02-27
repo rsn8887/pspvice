@@ -81,6 +81,7 @@
 #define OPTION_SHOW_BORDER   0x0B
 #define OPTION_REFRESH_RATE  0x0C
 #define OPTION_VSYNC         0x0D
+#define OPTION_PALETTE       0x0E
 
 #define SYSTEM_SCRNSHOT     0x11
 #define SYSTEM_RESET        0x12
@@ -89,6 +90,7 @@
 #define SYSTEM_SND_ENGINE   0x15
 #define SYSTEM_TRUE_DRIVE   0x16
 #define SYSTEM_VIDEO_STD    0x17
+#define SYSTEM_SND_CHIP     0x18
 
 #define SYSTEM_CART         0x26
 #define SYSTEM_TAPE         0x27
@@ -134,6 +136,14 @@ static const char *TabLabel[] =
   "About"
 };
 
+/* Palettes */
+static const char *PaletteNames[] =
+{
+  "none",
+  "pepto-pal",
+  "colodore"
+};
+
 /* Menu definitions */
 PL_MENU_OPTIONS_BEGIN(ToggleOptions)
   PL_MENU_OPTION("Disabled", 0)
@@ -143,6 +153,11 @@ PL_MENU_OPTIONS_BEGIN(ScreenSizeOptions)
   PL_MENU_OPTION("Actual size", DISPLAY_MODE_UNSCALED)
   PL_MENU_OPTION("4:3 scaled (fit height)", DISPLAY_MODE_FIT_HEIGHT)
   PL_MENU_OPTION("16:9 scaled (fit screen)", DISPLAY_MODE_FILL_SCREEN)
+PL_MENU_OPTIONS_END
+PL_MENU_OPTIONS_BEGIN(PaletteOptions)
+  PL_MENU_OPTION("None", PALETTE_NONE)
+  PL_MENU_OPTION("Pepto-PAL", PALETTE_PEPTO_PAL)
+  PL_MENU_OPTION("Colodore", PALETTE_COLODORE)
 PL_MENU_OPTIONS_END
 PL_MENU_OPTIONS_BEGIN(PspClockFreqOptions)
   PL_MENU_OPTION("222 MHz", 222)
@@ -167,6 +182,10 @@ PL_MENU_OPTIONS_BEGIN(SoundEngineOptions)
 #ifdef HAVE_RESID
   PL_MENU_OPTION("ReSID", SID_ENGINE_RESID)
 #endif
+PL_MENU_OPTIONS_END
+PL_MENU_OPTIONS_BEGIN(SoundChipOptions)
+  PL_MENU_OPTION("6581", SID_MODEL_6581)
+  PL_MENU_OPTION("8580", SID_MODEL_8580)
 PL_MENU_OPTIONS_END
 PL_MENU_OPTIONS_BEGIN(VideoStandardOptions)
   PL_MENU_OPTION("PAL-G", MACHINE_SYNC_PAL)
@@ -288,6 +307,8 @@ PL_MENU_ITEMS_BEGIN(SystemMenuDef)
                "\026\250\020 Enable/disable sound playback")
   PL_MENU_ITEM("SID engine",SYSTEM_SND_ENGINE,SoundEngineOptions,
                "\026\250\020 Select sound engine")
+  PL_MENU_ITEM("SID chip",SYSTEM_SND_CHIP,SoundChipOptions,
+               "\026\250\020 Select sound chip")
   PL_MENU_HEADER("Input")
   PL_MENU_ITEM("Joystick port",SYSTEM_JOYPORT,JoyPortOptions,
                "\026\250\020 Select joystick port")
@@ -312,6 +333,8 @@ PL_MENU_ITEMS_BEGIN(OptionMenuDef)
                "\026\250\020 Change screen size")
   PL_MENU_ITEM("Border",OPTION_SHOW_BORDER,ToggleOptions,
                "\026\250\020 Show/hide border surrounding the main display area")
+  PL_MENU_ITEM("Color Palette",OPTION_PALETTE,PaletteOptions,
+               "\026\250\020 Select color palette")
   PL_MENU_HEADER("Input")
   PL_MENU_ITEM("Virtual keyboard mode",OPTION_TOGGLE_VK,VkModeOptions,
                "\026\250\020 Select virtual keyboard mode")
@@ -727,6 +750,9 @@ static void psp_display_system_tab()
   resources_get_int("SidEngine", &setting);
   item = pl_menu_find_item_by_id(&SystemUiMenu.Menu, SYSTEM_SND_ENGINE);
   pl_menu_select_option_by_value(item, (void*)setting);
+  resources_get_int("SidModel", &setting);
+  item = pl_menu_find_item_by_id(&SystemUiMenu.Menu, SYSTEM_SND_CHIP);
+  pl_menu_select_option_by_value(item, (void*)setting);
   resources_get_int("Sound", &setting);
   item = pl_menu_find_item_by_id(&SystemUiMenu.Menu, SYSTEM_SOUND);
   pl_menu_select_option_by_value(item, (void*)setting);
@@ -930,6 +956,8 @@ static void psp_load_options()
   int vice_setting;
   vice_setting = pl_ini_get_int(&file, "VICE", "SidEngine", SID_ENGINE_FASTSID);
   resources_set_int("SidEngine", vice_setting);
+  vice_setting = pl_ini_get_int(&file, "VICE", "SidModel", SID_MODEL_6581);
+  resources_set_int("SidModel", vice_setting);
   vice_setting = pl_ini_get_int(&file, "VICE", "DriveTrueEmulation", 1);
   resources_set_int("DriveTrueEmulation", vice_setting);
   // Device traps needed if DriveTrueEmulation is 0, otherwise we get device not present error
@@ -940,6 +968,13 @@ static void psp_load_options()
   resources_set_int("MachineVideoStandard", vice_setting);
   vice_setting = pl_ini_get_int(&file, "VICE", "RefreshRate", MACHINE_SYNC_PAL);
   resources_set_int("RefreshRate", vice_setting);
+  vice_setting = pl_ini_get_int(&file, "VICE", "Palette", PALETTE_PEPTO_PAL);
+  if (vice_setting == 0 || vice_setting < 0 || vice_setting >= NUM_PALETTE_ENTRIES)
+    resources_set_int("VICIIExternalPalette", 0);
+  else {
+    resources_set_int("VICIIExternalPalette", 1);
+    resources_set_string_sprintf("%sPaletteFile", PaletteNames[vice_setting], "VICII");
+  }
   
   /* Clean up */
   pl_ini_destroy(&file);
@@ -979,6 +1014,8 @@ static int psp_save_options()
   int vice_setting;
   resources_get_int("SidEngine", &vice_setting);
   pl_ini_set_int(&file, "VICE", "SidEngine", vice_setting);
+  resources_get_int("SidModel", &vice_setting);
+  pl_ini_set_int(&file, "VICE", "SidModel", vice_setting);
   resources_get_int("DriveTrueEmulation", &vice_setting);
   pl_ini_set_int(&file, "VICE", "DriveTrueEmulation", vice_setting);
   resources_get_int("Sound", &vice_setting);
@@ -987,6 +1024,20 @@ static int psp_save_options()
   pl_ini_set_int(&file, "VICE", "MachineVideoStandard", vice_setting);
   resources_get_int("RefreshRate", &vice_setting);
   pl_ini_set_int(&file, "VICE", "RefreshRate", vice_setting);
+
+  resources_get_int("VICIIExternalPalette", &vice_setting);
+  if (vice_setting == 1) {
+    vice_setting = 0;
+    resources_set_int("VICIIExternalPalette", 1);
+    const char *palette_name;
+    resources_get_string_sprintf("%sPaletteFile", &palette_name, "VICII");
+    int i = 0;
+    for (i = 0; i < NUM_PALETTE_ENTRIES; i++)
+      if (!strncmp(palette_name, PaletteNames[i], 50))
+        vice_setting = i;
+  }
+  pl_ini_set_int(&file, "VICE", "Palette", vice_setting);
+
 
   int status = pl_ini_save(&file, path);
   pl_ini_destroy(&file);
@@ -1182,6 +1233,19 @@ void psp_display_menu()
         pl_menu_select_option_by_value(item, (void*)(int)psp_options.vsync);
       resources_get_int("RefreshRate", &setting);
       if ((item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_REFRESH_RATE)))
+        pl_menu_select_option_by_value(item, (void*)setting);
+
+      resources_get_int("VICIIExternalPalette", &setting);
+      if (setting == 1) {
+        setting = 0;
+        const char *palette_name;
+        resources_get_string_sprintf("%sPaletteFile", &palette_name, "VICII");
+        int i = 0;
+        for (i = 0; i < NUM_PALETTE_ENTRIES; i++)
+          if (!strncmp(palette_name, PaletteNames[i], 50))
+            setting = i;
+      }
+      if ((item = pl_menu_find_item_by_id(&OptionUiMenu.Menu, OPTION_PALETTE)))
         pl_menu_select_option_by_value(item, (void*)setting);
 
       pspUiOpenMenu(&OptionUiMenu, NULL);
@@ -1623,12 +1687,23 @@ static int OnMenuItemChanged(const struct PspUiMenu *uimenu,
     case OPTION_REFRESH_RATE:
       resources_set_int("RefreshRate", (int)option->value);
       break;
+    case OPTION_PALETTE:
+      if ((int)option->value == 0) {
+        resources_set_int("VICIIExternalPalette", 0);
+      } else {
+        resources_set_int("VICIIExternalPalette", 1);
+        resources_set_string_sprintf("%sPaletteFile", PaletteNames[(int)option->value], "VICII");
+      }
+      break;
     case OPTION_VSYNC:
       psp_options.vsync = (int)option->value;
       resources_set_int("VBLANKSync", (int)option->value);
       break;
     case SYSTEM_SND_ENGINE:
       resources_set_int("SidEngine", (int)option->value);
+      break;
+    case SYSTEM_SND_CHIP:
+      resources_set_int("SidModel", (int)option->value);
       break;
     case SYSTEM_SOUND:
       resources_set_int("Sound", (int)option->value);
