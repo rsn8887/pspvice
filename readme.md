@@ -30,7 +30,7 @@ Thanks to Akop for the amazing original PSP port.
 
 Thanks to DelayedQuasar for updating Akop's port to Vice 3.2.
 
-Thanks to my supporters on Patreon: Andyways, CountDuckula, Greg Gibson, Jesse Harlin, Ã–zgÃ¼r Karter, Matthew Machnee, and RadicalR.
+Thanks to my supporters on Patreon: Andyways, CountDuckula, Greg Gibson, Jesse Harlin, Duncan Harris, Özgür Karter, Matthew Machnee, Mored1984, Ibrahim Fazel Poor, and RadicalR.
 
 Changelog:
 ========
