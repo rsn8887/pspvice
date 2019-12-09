@@ -968,7 +968,7 @@ static void psp_load_options()
   resources_set_int("MachineVideoStandard", vice_setting);
   vice_setting = pl_ini_get_int(&file, "VICE", "RefreshRate", MACHINE_SYNC_PAL);
   resources_set_int("RefreshRate", vice_setting);
-  vice_setting = pl_ini_get_int(&file, "VICE", "Palette", PALETTE_PEPTO_PAL);
+  vice_setting = pl_ini_get_int(&file, "VICE", "Palette", PALETTE_COLODORE);
   if (vice_setting == 0 || vice_setting < 0 || vice_setting >= NUM_PALETTE_ENTRIES)
     resources_set_int("VICIIExternalPalette", 0);
   else {
