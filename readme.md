@@ -35,6 +35,8 @@ Changelog:
 3.2.5
 
 - fix slightly wrong palette colors
+- fix problems with palette set to none not working sometimes
+- make colodore the new default palette instead of pepto-pal
 
 3.2.4r2
 
