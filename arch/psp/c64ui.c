@@ -1035,6 +1035,9 @@ static int psp_save_options()
     for (i = 0; i < NUM_PALETTE_ENTRIES; i++)
       if (!strncmp(palette_name, PaletteNames[i], 50))
         vice_setting = i;
+  } else {
+     resources_set_int("VICIIExternalPalette", 0);
+     vice_setting = 0;
   }
   pl_ini_set_int(&file, "VICE", "Palette", vice_setting);
 
