@@ -13,8 +13,6 @@ The new sound chip option is useful for modern games which were designed for the
 
 The new palette option is useful to achieve more saturated, darker colors. My personal favorite is `pepto-pal`, but there's also `colodore` which gives higher saturation. Setting this to `none` gives the terrible, neon-colored Vice 3.2 default palette.
 
-
-
 Original website by Akop (v2.2.15):
 https://psp.akop.org/vice.htm
 
@@ -34,6 +32,14 @@ Thanks to my supporters on Patreon: Andyways, CountDuckula, Greg Gibson, Jesse H
 
 Changelog:
 ========
+3.2.5
+
+- fix slightly wrong palette colors
+
+3.2.4r2
+
+- fix colodore.vpl palette file with the correct default colors from www.colodore.com
+
 3.2.4
 
 - add SID model option with two choices: 6581, and 8580.
